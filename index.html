@@ -1,0 +1,58 @@
+import java.util.Scanner;
+
+public class SubsetSumTopDown {
+    private static Boolean[][] subsetSumMem;
+
+    private static boolean hasSubsetSumRecur(int[] values, int targetSum, int n) {
+        if (targetSum == 0) {
+            return true;
+        }
+        if (n == 0) {
+            return false;
+        }
+        if (subsetSumMem[targetSum][n] != null) {
+            return subsetSumMem[targetSum][n];
+        }
+        if (values[n - 1] > targetSum) {
+            subsetSumMem[targetSum][n] = hasSubsetSumRecur(values, targetSum, n - 1);
+        } else {
+            subsetSumMem[targetSum][n] = hasSubsetSumRecur(values, targetSum - values[n - 1], n - 1)
+                    || hasSubsetSumRecur(values, targetSum, n - 1);
+        }
+        return subsetSumMem[targetSum][n];
+    }
+
+    private static boolean hasSubsetSumMemoized(int[] values, int targetSum, int n) {
+        subsetSumMem = new Boolean[targetSum + 1][n + 1];
+        for (int s = 0; s <= targetSum; s++) {
+            for (int i = 0; i <= n; i++) {
+                subsetSumMem[s][i] = null;
+            }
+        }
+        return hasSubsetSumRecur(values, targetSum, n);
+    }
+
+    public static void main(String[] args) {
+        Scanner keyboard = new Scanner(System.in);
+
+        // Prompt the user for input
+        System.out.println("Enter the number of elements in the array:");
+        int n = keyboard.nextInt();
+
+        int[] values = new int[n];
+        System.out.println("Enter the elements of the array:");
+        for (int i = 0; i < n; i++) {
+            values[i] = keyboard.nextInt();
+        }
+
+        System.out.println("Enter the target sum:");
+        int target = keyboard.nextInt();
+
+        // Close the scanner
+        keyboard.close();
+
+        // Call the method and print the result
+        boolean result = hasSubsetSumMemoized(values, target, n);
+        System.out.println("Has Subset sum: " + result);
+    }
+}
